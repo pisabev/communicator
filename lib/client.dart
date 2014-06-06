@@ -46,6 +46,7 @@ class Loader {
     }
 }
 */
+
 class Communicator {
 
     static Communicator _instance;
