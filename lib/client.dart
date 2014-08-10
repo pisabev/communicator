@@ -7,12 +7,6 @@ import 'dart:collection';
 import 'package:route/client.dart';
 export 'package:route/client.dart';
 
-//var path = 'http://${window.location.host}/centryl';
-
-//Function loadingRequest;
-
-//var serverCall = serverCallAjax;
-
 /*
     loadingRequest = (cl.CJSElement loading) {
         var load_el;
@@ -32,18 +26,19 @@ export 'package:route/client.dart';
 
 class Loader {
 
-    Function load_start, load_end;
-
     Timer timer;
 
-    Loader(this.load_start, this.load_end);
+    Loader();
 
-    start() => timer = new Timer(new Duration(milliseconds:100), () => load_start());
+    _stopTimer() => timer.cancel();
 
-    end() {
+    start(loading) => timer = new Timer(new Duration(milliseconds:100), () => loading());
+
+    end(data, callback) {
         timer.cancel();
-        load_end();
+        callback(data);
     }
+
 }
 */
 
@@ -87,7 +82,6 @@ class Communicator {
         var cancel_loading = loadingRequest(loading);
         WebsocketService ws = new WebsocketService();
         ws.connect().then((_) {
-
             var ts = new WebsocketClient(contr, ws);
             ts.send(data).then((data) => cancel_loading(data, callback));
         });
@@ -108,31 +102,6 @@ class Communicator {
     }
 
 }
-
-/*serverCallWS (contr, Map data, Function callback, dynamic loading) {
-    var cancel_loading = loadingRequest(loading);
-    WebsocketService ws = new WebsocketService();
-    ws.connect().then((_) {
-        var ts = new WebsocketClient(contr, ws);
-        ts.send(data).then((data) => cancel_loading(data, callback));
-    });
-}
-
-serverCallAjax (contr, Map data, Function callback, dynamic loading, {timeout: 20000}) {
-    Completer completer = new Completer();
-    var cancel_loading = loadingRequest(loading);
-    var request = new HttpRequest();
-    request.open('POST', path + contr, async:true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-    request.timeout = timeout;
-    request.onLoad.listen((e) {
-        var data = JSON.decode(request.responseText);
-        cancel_loading(data, callback);
-    });
-    request.onTimeout.listen((e) => cancel_loading());
-    request.send(Uri.encodeFull('request='+JSON.encode(data)));
-    return completer.future;
-}*/
 
 class WebsocketClient {
 
