@@ -7,11 +7,11 @@ import 'dart:collection';
 import 'package:route/client.dart';
 export 'package:route/client.dart';
 
-var path = 'http://${window.location.host}/centryl';
+//var path = 'http://${window.location.host}/centryl';
 
-Function loadingRequest;
+//Function loadingRequest;
 
-var serverCall = serverCallAjax;
+//var serverCall = serverCallAjax;
 
 /*
     loadingRequest = (cl.CJSElement loading) {
@@ -55,7 +55,9 @@ class Communicator {
 
     String path;
 
-    Function call;
+    Function _call;
+
+    Function loadingRequest = (_) => null;
 
     factory Communicator([String path]) {
         if (_instance == null || path != null)
@@ -63,16 +65,22 @@ class Communicator {
         return _instance;
     }
 
-    Communicator._(this.path) {
-        call = _callAjax;
-        ws = new WebsocketService('ws://$path/ws');
-        ws.connect().then((_) => call = _callWS);
+    Communicator._(this.path);
+
+    upgrade(path_ws) {
+        _call = _callAjax;
+        ws = new WebsocketService(path_ws);
+        ws.connect().then((_) => _call = _callWS);
         ws.controller.stream.listen((d) {
             print(d);
         });
     }
 
-    get(contr, Map data, Function callback, dynamic loading) => call(contr, data, callback, loading);
+    Future call(contr, Map data, dynamic loading) {
+        Completer completer = new Completer();
+        _call(contr, data, completer.complete, loading);
+        return completer.future;
+    }
 
     _callWS (contr, Map data, Function callback, dynamic loading) {
         var cancel_loading = loadingRequest(loading);
@@ -100,7 +108,7 @@ class Communicator {
 
 }
 
-serverCallWS (contr, Map data, Function callback, dynamic loading) {
+/*serverCallWS (contr, Map data, Function callback, dynamic loading) {
     var cancel_loading = loadingRequest(loading);
     WebsocketService ws = new WebsocketService();
     ws.connect().then((_) {
@@ -123,7 +131,7 @@ serverCallAjax (contr, Map data, Function callback, dynamic loading, {timeout: 2
     request.onTimeout.listen((e) => cancel_loading());
     request.send(Uri.encodeFull('request='+JSON.encode(data)));
     return completer.future;
-}
+}*/
 
 class WebsocketClient {
 
