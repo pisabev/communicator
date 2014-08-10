@@ -65,10 +65,11 @@ class Communicator {
         return _instance;
     }
 
-    Communicator._(this.path);
+    Communicator._(this.path) {
+        _call = _callAjax;
+    }
 
     upgrade(path_ws) {
-        _call = _callAjax;
         ws = new WebsocketService(path_ws);
         ws.connect().then((_) => _call = _callWS);
         ws.controller.stream.listen((d) {
