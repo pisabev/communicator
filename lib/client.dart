@@ -64,11 +64,9 @@ class Communicator {
         _call = _callAjax;
     }
 
-    Future upgrade(path_ws) {
+    Future upgrade(path_ws, Function on_server_call) {
         ws = new WebsocketService(path_ws);
-        ws.controller.stream.listen((d) {
-            print(d);
-        });
+        ws.controller.stream.listen(on_server_call);
         return ws.connect().then((_) => _call = _callWS);
     }
 
