@@ -4,8 +4,6 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
-import 'package:route/server.dart';
-export 'package:route/server.dart';
 
 typedef Future<bool> WSFilter();
 

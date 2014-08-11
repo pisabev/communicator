@@ -3,9 +3,6 @@ library communicator_client;
 import 'dart:html';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:collection';
-import 'package:route/client.dart';
-export 'package:route/client.dart';
 
 /*
     loadingRequest = (cl.CJSElement loading) {
