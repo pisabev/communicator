@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
 
+export 'package:route/server.dart';
+
 typedef Future<bool> WSFilter();
 
 Future doWhile(Iterable iterable, Future<bool> action(i)) =>
