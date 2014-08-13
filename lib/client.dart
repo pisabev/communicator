@@ -69,20 +69,20 @@ class Communicator {
 
     Future call(contr, Map data, dynamic loading) {
         Completer completer = new Completer();
-        _call(contr, data, completer.complete, loading);
+        _call(contr, data, completer.complete, completer.completeError, loading);
         return completer.future;
     }
 
-    _callWS (contr, Map data, Function callback, dynamic loading) {
+    _callWS (contr, Map data, Function callback, Function callback_error, dynamic loading) {
         var cancel_loading = loadingRequest(loading);
         WebsocketService ws = new WebsocketService();
         ws.connect().then((_) {
             var ts = new WebsocketClient(contr, ws);
-            ts.send(data).then((data) => cancel_loading(data, callback));
+            ts.send(data).then((data) => cancel_loading(data, callback, callback_error));
         });
     }
 
-    _callAjax (contr, Map data, Function callback, dynamic loading, {timeout: 20000}) {
+    _callAjax (contr, Map data, Function callback, Function callback_error, dynamic loading, {timeout: 20000}) {
         var cancel_loading = loadingRequest(loading);
         var request = new HttpRequest();
         request.open('POST', path + contr, async:true);
@@ -90,7 +90,7 @@ class Communicator {
         request.timeout = timeout;
         request.onLoad.listen((e) {
             var data = JSON.decode(request.responseText);
-            cancel_loading(data, callback);
+            cancel_loading(data, callback, callback_error);
         });
         request.onTimeout.listen((e) => cancel_loading());
         request.send(Uri.encodeFull('request='+JSON.encode(data)));
