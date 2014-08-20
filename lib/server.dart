@@ -76,7 +76,7 @@ class WSRequest {
 
 }
 
-class WSRouter {
+class WSRouter extends Router {
 
     final Client _incoming;
 
