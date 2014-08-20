@@ -88,7 +88,7 @@ class WSRouter {
 
     WSRouter(WebSocket incoming, [Map session]) : _incoming = new Client(incoming, session) {
         _incoming.ws.map((json) => new WSRequest(json, _incoming))
-        .listen(_handleRequest, onError: () => Client.remove(_incoming), onDone: () => Client.remove(_incoming));
+        .listen(_handleRequest, onError: (_) => Client.remove(_incoming), onDone: () => Client.remove(_incoming));
     }
 
     Stream<WSRequest> serve(Pattern url, {method}) {
