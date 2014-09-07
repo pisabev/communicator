@@ -1,5 +1,6 @@
 name: communicator
 description: WebSocket/HTTP Communicator
+version: 1.0.0
 dependencies:
   route: any
   http_server: any
