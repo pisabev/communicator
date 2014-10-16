@@ -35,11 +35,11 @@ class Client {
 
     static List<Client> _instances = new List();
 
-    final Map session;
+    HttpRequest req;
 
     final WebSocket ws;
 
-    Client(this.ws, [this.session]) {
+    Client(this.ws, [this.req]) {
         _instances.add(this);
     }
 
@@ -68,7 +68,9 @@ class WSRequest {
         uri = new Uri(path:controller);
     }
 
-    get session => client.session;
+    get session => client.req.session;
+
+    get req => client.req;
 
     get clients => Client._instances;
 
@@ -86,7 +88,7 @@ class WSRouter {
 
     final StreamController<WSRequest> _defaultController = new StreamController<WSRequest>();
 
-    WSRouter(WebSocket incoming, [Map session]) : _incoming = new Client(incoming, session) {
+    WSRouter(WebSocket incoming, [HttpRequest req]) : _incoming = new Client(incoming, req) {
         _incoming.ws.map((json) => new WSRequest(json, _incoming))
         .listen(_handleRequest, onError: (_) => Client.remove(_incoming), onDone: () => Client.remove(_incoming));
     }
