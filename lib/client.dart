@@ -4,6 +4,8 @@ import 'dart:html';
 import 'dart:async';
 import 'dart:convert';
 
+import 'carrier.dart';
+
 /*
     loadingRequest = (cl.CJSElement loading) {
         var load_el;
@@ -186,20 +188,20 @@ class WebsocketService {
     }
 
     void onMessage(data) {
-        var message = JSON.decode(data);
-        var nmsp = scopes[message['nmsp']];
+        var carrier = new Carrier.atClient(data);
+        var nmsp = scopes[carrier.namespace];
         if(nmsp != null) {
-            nmsp.controller.add(message['rsp']);
-            scopes.remove(message['nmsp']);
+            nmsp.controller.add(carrier.message);
+            scopes.remove(carrier.namespace);
         } else {
-            controller.add(message['rsp']);
+            controller.add(carrier.message);
         }
     }
 
     send(String controller, [String msg = '']) {
         if (webSocket != null && webSocket.readyState == WebSocket.OPEN) {
             var nmsp = (++requests).toString();
-            webSocket.send(JSON.encode({'nmsp': nmsp, 'ctrl': controller, 'msg': msg}));
+            webSocket.send(new Carrier(nmsp).toServer(controller, msg));
             return nmsp;
         } else
             new Timer(new Duration(seconds:1), () => send(controller, msg));

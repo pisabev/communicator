@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:collection';
 
+import 'carrier.dart';
+
 export 'package:route/server.dart';
 
 typedef Future<bool> WSFilter();
@@ -33,48 +35,49 @@ bool matchesFull(Pattern pattern, String str) {
 
 class Client {
 
-    static List<Client> _instances = new List();
+    static List<Client> instances = new List();
 
     HttpRequest req;
 
     final WebSocket ws;
 
     Client(this.ws, [this.req]) {
-        _instances.add(this);
+        instances.add(this);
     }
 
     write(String data) => ws.add(data);
 
+    send(dynamic data) => ws.add(new Carrier().toClient(data));
+
     static remove(Client client) {
         client.ws.close();
-        _instances.remove(client);
+        instances.remove(client);
     }
 
 }
 
 class WSRequest {
 
-    String namespace, controller, message;
+    Carrier carrier;
 
     Client client;
 
     Uri uri;
 
     WSRequest(String json, this.client) {
-        Map m = JSON.decode(json);
-        namespace = m['nmsp'];
-        controller = m['ctrl'];
-        message = m['msg'];
-        uri = new Uri(path:controller);
+        carrier = new Carrier.atServer(json);
+        uri = new Uri(path:carrier.controller);
     }
+
+    get controller => carrier.controller;
+
+    get message => carrier.message;
 
     get session => client.req.session;
 
     get req => client.req;
 
-    get clients => Client._instances;
-
-    write(String data) => client.write(data);
+    write(dynamic data) => client.write(carrier.toClient(data));
 
 }
 
