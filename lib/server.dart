@@ -47,7 +47,7 @@ class Client {
 
     write(String data) => ws.add(data);
 
-    send(dynamic data) => ws.add(new Carrier().toClient(data));
+    send(String controller, dynamic data) => ws.add(new Carrier(controller).formMessage(data));
 
     static remove(Client client) {
         client.ws.close();
@@ -65,7 +65,7 @@ class WSRequest {
     Uri uri;
 
     WSRequest(String json, this.client) {
-        carrier = new Carrier.atServer(json);
+        carrier = new Carrier.fromData(json);
         uri = new Uri(path:carrier.controller);
     }
 
@@ -77,7 +77,7 @@ class WSRequest {
 
     get req => client.req;
 
-    write(dynamic data) => client.write(carrier.toClient(data));
+    write(dynamic data) => client.write(carrier.formMessage(data));
 
 }
 

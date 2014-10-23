@@ -188,20 +188,20 @@ class WebsocketService {
     }
 
     void onMessage(data) {
-        var carrier = new Carrier.atClient(data);
+        var carrier = new Carrier.fromData(data);
         var nmsp = scopes[carrier.namespace];
         if(nmsp != null) {
             nmsp.controller.add(carrier.message);
             scopes.remove(carrier.namespace);
         } else {
-            controller.add(carrier.message);
+            controller.add([carrier.controller, carrier.message]);
         }
     }
 
     send(String controller, [String msg = '']) {
         if (webSocket != null && webSocket.readyState == WebSocket.OPEN) {
             var nmsp = (++requests).toString();
-            webSocket.send(new Carrier(nmsp).toServer(controller, msg));
+            webSocket.send(new Carrier(controller, nmsp).formMessage(msg));
             return nmsp;
         } else
             new Timer(new Duration(seconds:1), () => send(controller, msg));

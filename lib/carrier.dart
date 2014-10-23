@@ -12,23 +12,15 @@ class Carrier {
 
     dynamic data;
 
-    Carrier([this.namespace = 0]);
+    Carrier(this.controller, [this.namespace = 0]);
 
-    Carrier.atClient(data) {
-        Map m = JSON.decode(data);
-        namespace = m[_nmsp];
-        message = m[_msg];
-    }
-
-    Carrier.atServer(data) {
+    Carrier.fromData(data) {
         Map m = JSON.decode(data);
         namespace = m[_nmsp];
         controller = m[_ctrl];
         message = m[_msg];
     }
 
-    toClient(message) => JSON.encode({_nmsp: namespace, _msg: message});
-
-    toServer(controller, message) => JSON.encode({_nmsp: namespace, _ctrl: controller, _msg: message});
+    formMessage(message) => JSON.encode({_nmsp: namespace, _ctrl: controller, _msg: message});
 
 }
